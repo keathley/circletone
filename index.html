@@ -24,26 +24,38 @@
           return (Math.random() * (max - min) + min)|0
         }
 
+
         var MAX_CIRCLES = 50
+        var X_VEL = 5
+        var Y_VEL = 5
+        var MIN_COLOR = 20
+        var MAX_COLOR = 80
+        var MIN_R = 10
+        var MAX_R = 50
+        var MIN_TTL = 30
+        var MAX_TTL = 70
 
         function Circle(x, y, r) {
           this.x     = x
           this.y     = y
-          this.r     = rand(10, 50)
-          this.color = rand(20, 100)
-          this.xVel  = rand(-6, 6)
-          this.yVel  = rand(-6, 6)
+          this.r     = rand(MIN_R, MAX_R)
+          this.color = rand(MIN_COLOR, MAX_COLOR)
+          this.xVel  = rand(-X_VEL, X_VEL)
+          this.yVel  = rand(-Y_VEL, Y_VEL)
           this.alive = true
           this.aliveCount = 0
-          this.ttl = rand(30, 60)
+          this.ttl = rand(MIN_TTL, MAX_TTL)
         }
 
         Circle.prototype.draw = function(ctx) {
-          ctx.fillStyle = 'hsl(48,100%,'+ this.color +'%)'
+          ctx.fillStyle = ctx.strokeStyle = this.colorString()
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, true)
-          ctx.stroke()
           ctx.fill();
+
+        }
+        Circle.prototype.colorString = function() {
+          return 'hsla(48,100%,'+ this.color +'%,' + this.alpha() + ')'
         }
 
         Circle.prototype.update = function() {
@@ -55,10 +67,13 @@
           }
         }
 
+        Circle.prototype.alpha = function() {
+          return (((this.aliveCount * -100) / this.ttl) + 100) / 100
+        }
+
         Circle.prototype.isAlive = function() {
           return !!this.alive
         }
-
 
         var mousePos = { x: 0, y: 0 }
         var circles = []
@@ -88,7 +103,6 @@
           })
 
           circles = circles.filter(function(circle) {
-            console.assert(circle.isAlive())
             return circle.isAlive()
           })
 
