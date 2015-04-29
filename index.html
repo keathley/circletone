@@ -95,7 +95,7 @@
         })
 
         window.addEventListener('keydown', function handleKeydown(e) {
-          if (!e.which === 32) return
+          if (e.which !== 32) return
           isPlaying = !isPlaying
         })
 
