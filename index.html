@@ -24,16 +24,15 @@
           return (Math.random() * (max - min) + min)|0
         }
 
-
-        var MAX_CIRCLES = 50
-        var X_VEL = 5
-        var Y_VEL = 5
+        var MAX_CIRCLES = 500
+        var X_VEL = 3
+        var Y_VEL = 3
         var MIN_COLOR = 20
         var MAX_COLOR = 80
         var MIN_R = 10
         var MAX_R = 50
-        var MIN_TTL = 30
-        var MAX_TTL = 70
+        var MIN_TTL = 70
+        var MAX_TTL = 100
 
         function Circle(x, y, r) {
           this.x     = x
@@ -54,6 +53,7 @@
           ctx.fill();
 
         }
+
         Circle.prototype.colorString = function() {
           return 'hsla(48,100%,'+ this.color +'%,' + this.alpha() + ')'
         }
@@ -75,6 +75,8 @@
           return !!this.alive
         }
 
+        var isPlaying = true
+        var isMouseVisible = false
         var mousePos = { x: 0, y: 0 }
         var circles = []
         var can = document.getElementById('webgl-canvas')
@@ -86,6 +88,19 @@
         can.addEventListener('mousemove', function updateMousePos(e) {
           mousePos = { x: e.clientX, y: e.clientY };
         });
+
+        window.addEventListener('keydown', function handleKeydown(e) {
+          if (!e.which === 32) return
+          isPlaying = !isPlaying
+        })
+
+        window.addEventListener('mouseout', function(e) {
+          isMouseVisible = false
+        })
+
+        window.addEventListener('mouseover', function(e) {
+          isMouseVisible = true
+        })
 
         function draw() {
           circles.forEach(function(circle) {
@@ -106,14 +121,16 @@
             return circle.isAlive()
           })
 
-          if (circles.length < MAX_CIRCLES)
+          if (circles.length < MAX_CIRCLES && isMouseVisible)
             circles.push( new Circle(mousePos.x, mousePos.y, 50) )
         }
 
         (function animLoop() {
-          clear()
-          update()
-          draw( ctx )
+          if (isPlaying) {
+            clear()
+            update()
+            draw( ctx )
+          }
           requestAnimationFrame( animLoop )
         })()
       })();
