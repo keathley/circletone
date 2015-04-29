@@ -1,5 +1,6 @@
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
       html, body {
         height: 100%;
@@ -51,7 +52,6 @@
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, true)
           ctx.fill();
-
         }
 
         Circle.prototype.colorString = function() {
@@ -89,6 +89,11 @@
           mousePos = { x: e.clientX, y: e.clientY };
         });
 
+        can.addEventListener('touchmove', function handleTouchMove(e) {
+          var touch = e.targetTouches[0]
+          mousePos = { x: touch.pageX, y: touch.pageY }
+        })
+
         window.addEventListener('keydown', function handleKeydown(e) {
           if (!e.which === 32) return
           isPlaying = !isPlaying
@@ -100,6 +105,10 @@
 
         window.addEventListener('mouseover', function(e) {
           isMouseVisible = true
+        })
+
+        document.body.addEventListener('touchmove', function(e) {
+          e.preventDefault()
         })
 
         function draw() {
