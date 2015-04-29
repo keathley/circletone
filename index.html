@@ -1,0 +1,108 @@
+<html>
+  <head>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        background: black;
+      }
+
+      #webgl-canvas {
+        height: 100%;
+        width: 100%;
+        /*background-color: #1E1E1E;*/
+        background-color: #201900;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="webgl-canvas">
+    </canvas>
+    <script type="text/javascript">
+      (function() {
+        function rand(min, max) {
+          return (Math.random() * (max - min) + min)|0
+        }
+
+        var MAX_CIRCLES = 50
+
+        function Circle(x, y, r) {
+          this.x     = x
+          this.y     = y
+          this.r     = rand(10, 50)
+          this.color = rand(20, 100)
+          this.xVel  = rand(-6, 6)
+          this.yVel  = rand(-6, 6)
+          this.alive = true
+          this.aliveCount = 0
+          this.ttl = rand(30, 60)
+        }
+
+        Circle.prototype.draw = function(ctx) {
+          ctx.fillStyle = 'hsl(48,100%,'+ this.color +'%)'
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, true)
+          ctx.stroke()
+          ctx.fill();
+        }
+
+        Circle.prototype.update = function() {
+          this.x += this.xVel
+          this.y += this.yVel
+
+          if (this.aliveCount++ > this.ttl) {
+            this.alive = false
+          }
+        }
+
+        Circle.prototype.isAlive = function() {
+          return !!this.alive
+        }
+
+
+        var mousePos = { x: 0, y: 0 }
+        var circles = []
+        var can = document.getElementById('webgl-canvas')
+        var cw = can.width = can.offsetWidth;
+        var ch = can.height = can.offsetHeight;
+
+        var ctx = can.getContext('2d');
+
+        can.addEventListener('mousemove', function updateMousePos(e) {
+          mousePos = { x: e.clientX, y: e.clientY };
+        });
+
+        function draw() {
+          circles.forEach(function(circle) {
+            circle.draw(ctx);
+          })
+        }
+
+        function clear() {
+          ctx.clearRect(0, 0, cw, ch)
+        }
+
+        function update() {
+          circles.forEach(function(circle) {
+            circle.update()
+          })
+
+          circles = circles.filter(function(circle) {
+            console.assert(circle.isAlive())
+            return circle.isAlive()
+          })
+
+          if (circles.length < MAX_CIRCLES)
+            circles.push( new Circle(mousePos.x, mousePos.y, 50) )
+        }
+
+        (function animLoop() {
+          clear()
+          update()
+          draw( ctx )
+          requestAnimationFrame( animLoop )
+        })()
+      })();
+    </script>
+  </body>
+</html>
