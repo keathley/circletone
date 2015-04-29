@@ -11,7 +11,6 @@
       #webgl-canvas {
         height: 100%;
         width: 100%;
-        /*background-color: #1E1E1E;*/
         background-color: #201900;
       }
     </style>
@@ -25,15 +24,15 @@
           return (Math.random() * (max - min) + min)|0
         }
 
-        var MAX_CIRCLES = 500
-        var X_VEL = 3
-        var Y_VEL = 3
+        var MAX_CIRCLES = 50000
+        var X_VEL = 6
+        var Y_VEL = 6
         var MIN_COLOR = 20
         var MAX_COLOR = 80
         var MIN_R = 10
         var MAX_R = 50
         var MIN_TTL = 70
-        var MAX_TTL = 100
+        var MAX_TTL = 300
 
         function Circle(x, y, r) {
           this.x     = x
@@ -118,7 +117,8 @@
         }
 
         function clear() {
-          ctx.clearRect(0, 0, cw, ch)
+          ctx.fillStyle = 'rgba(0,0,0,.05)';
+          ctx.fillRect(0, 0, cw, ch)
         }
 
         function update() {
@@ -130,6 +130,7 @@
             return circle.isAlive()
           })
 
+          console.log(circles.length)
           if (circles.length < MAX_CIRCLES && isMouseVisible)
             circles.push( new Circle(mousePos.x, mousePos.y, 50) )
         }
