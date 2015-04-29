@@ -80,13 +80,17 @@
         var mousePos = { x: 0, y: 0 }
         var circles = []
         var can = document.getElementById('webgl-canvas')
-        var cw = can.width = can.offsetWidth;
-        var ch = can.height = can.offsetHeight;
+        var cw = can.width = can.offsetWidth * devicePixelRatio;
+        var ch = can.height = can.offsetHeight * devicePixelRatio;
 
         var ctx = can.getContext('2d');
+        ctx.scale(devicePixelRatio, devicePixelRatio)
 
         can.addEventListener('mousemove', function updateMousePos(e) {
-          mousePos = { x: e.clientX, y: e.clientY };
+          mousePos = {
+            x: e.clientX,
+            y: e.clientY
+          };
         });
 
         can.addEventListener('touchmove', function handleTouchMove(e) {
